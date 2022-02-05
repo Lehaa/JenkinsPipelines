@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Checkout Snake project') {
             steps{
-                git branch: "master",
+                git branch: "main",
                     credentialsId: '1438fbd6-4b4b-4907-a12c-dda8dcc3e2d7',
                     url: "https://github.com/Lehaa/Snake-game"
             }
