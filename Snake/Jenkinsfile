@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    parameters {
+        string(name: 'tomcat_ip', defaultValue: '', description: "Please insert the tomcat IP / Hostname")
+    }
     stages {
         stage('Checkout Snake project') {
             steps{
@@ -13,6 +15,12 @@ pipeline {
             steps{
                 withMaven(maven : 'maven3'){
                     sh 'mvn clean install'
+                }
+            }
+        }
+        stage ('Deploy war to tomcat') {
+            steps{
+                    deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://${params.tomcat_ip}:8080/')], contextPath: 'Snake', war: '**/*'
                 }
             }
         }
