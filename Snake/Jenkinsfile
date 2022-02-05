@@ -20,7 +20,7 @@ pipeline {
         }
         stage ('Deploy war to tomcat') {
             steps{
-                deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://' + "${params.tomcat_ip}" + :8080/')], contextPath: 'Snake', war: '**/*.war'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://' + '${params.tomcat_ip}' + :8080/')], contextPath: 'Snake', war: '**/*.war'
             }
         }
     }
