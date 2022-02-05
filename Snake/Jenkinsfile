@@ -8,7 +8,7 @@ pipeline {
                     credentialsID: '1438fbd6-4b4b-4907-a12c-dda8dcc3e2d7',
                     url: "https://github.com/Lehaa/Snake"
             }
-        },
+        }
         stage ('Compile Stage') {
             steps{
                 withMaven(maven : 'maven3'){
