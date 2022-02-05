@@ -15,11 +15,12 @@ pipeline {
             steps{
                 withMaven(maven : 'maven3'){
                     sh 'mvn clean install'
+                }
             }
         }
         stage ('Deploy war to tomcat') {
             steps{
-                    deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://${params.tomcat_ip}:8080/')], contextPath: 'Snake', war: '**/*'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://${params.tomcat_ip}:8080/')], contextPath: 'Snake', war: '**/*'
             }
         }
     }
