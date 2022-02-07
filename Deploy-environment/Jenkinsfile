@@ -28,9 +28,9 @@ pipeline {
                     currentBuild.displayName = (params.env_name)
 
                 sh '''
-                    ls
+                    set -ex
                     source ${WORKSPACE}/variables.sh "$env_name"
-                    source terraform.sh
+                    source ${WORKSPACE}/terraform.sh
                 '''
                 }
             }
