@@ -28,9 +28,6 @@ pipeline {
                     currentBuild.displayName = (params.env_name)
 
                 sh '''
-                    pwd
-                    ls
-                    find / -name JenkinsPipelines
                     source variables.sh
                     source terraform.sh
                 '''
