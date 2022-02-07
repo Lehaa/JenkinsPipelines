@@ -30,7 +30,6 @@ pipeline {
                 sh '''
                     set -ex
                     source ${WORKSPACE}/variables.sh "$env_name"
-                    source ${WORKSPACE}/terraform.sh
                 '''
                 }
             }
