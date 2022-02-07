@@ -24,7 +24,9 @@ pipeline {
         }
         stage ('Compile Stage') {
             steps{
-                withMaven(maven : 'maven3'){
+                script{
+                    currentBuild.displayName = (params.env_name)
+                }
                     sh '''
                         pwd
                         ls
