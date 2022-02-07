@@ -28,6 +28,7 @@ pipeline {
                     currentBuild.displayName = (params.env_name)
 
                 sh '''
+                    ls
                     source variables.sh
                     source terraform.sh
                 '''
