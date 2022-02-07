@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'env_name', defaultValue: 'test-env-<yourname>-<env_number>', description: "Please enter the environment name")
+    }
+    stages {
+        stage('Checkout Terraform code') {
+            steps{
+                git branch: "main",
+                    credentialsId: '1438fbd6-4b4b-4907-a12c-dda8dcc3e2d7',
+                    url: "https://github.com/Lehaa/Environment-terraform"
+            }
+        }
+        stage ('Compile Stage') {
+            steps{
+                withMaven(maven : 'maven3'){
+                    sh '''
+                        source variables.sh
+                        source terraform.sh
+                    '''
+                }
+            }
+        }
+    }
+}
