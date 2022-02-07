@@ -26,14 +26,14 @@ pipeline {
             steps{
                 script{
                     currentBuild.displayName = (params.env_name)
-                }
-                    sh '''
-                        pwd
-                        ls
-                        find / -name variables.sh
-                        source variables.sh
-                        source terraform.sh
-                    '''
+
+                sh '''
+                    pwd
+                    ls
+                    find / -name variables.sh
+                    source variables.sh
+                    source terraform.sh
+                '''
                 }
             }
         }
