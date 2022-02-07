@@ -15,6 +15,8 @@ pipeline {
             steps{
                 withMaven(maven : 'maven3'){
                     sh '''
+                        pwd
+                        find / -name variables.sh
                         source variables.sh
                         source terraform.sh
                     '''
