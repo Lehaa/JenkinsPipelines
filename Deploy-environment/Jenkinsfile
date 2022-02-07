@@ -29,7 +29,7 @@ pipeline {
 
                 sh '''
                     ls
-                    source ${WORKSPACE}/variables.sh (params.env_name)
+                    source ${WORKSPACE}/variables.sh "$env_name"
                     source terraform.sh
                 '''
                 }
