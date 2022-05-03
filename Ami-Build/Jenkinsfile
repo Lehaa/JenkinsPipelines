@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    parameters {
+        choice(
+            name: 'AMI',
+            choices: ['base-centos8', 'agent-centos8', 'tomcat-centos8'])
+    }
+    stages {
+        stage('Checkout Packer templates') {
+            steps{
+                git branch: "main",
+                    credentialsId: '1438fbd6-4b4b-4907-a12c-dda8dcc3e2d7',
+                    url: "https://github.com/Lehaa/Ami-builder"
+            }
+        }
+        stage ('Execute Packer') {
+            steps{
+                withMaven(maven : 'maven3'){
+                    sh 'mvn clean install'
+                }
+            }
+        }
+    }
+}
