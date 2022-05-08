@@ -18,19 +18,14 @@ pipeline {
         stage('Checkout Terraform code') {
             steps{
                 git branch: "main",
-                    credentialsId: '1438fbd6-4b4b-4907-a12c-dda8dcc3e2d7',
+                    credentialsId: 'GITHUB_CREDENTIALS',
                     url: "https://github.com/Lehaa/Environment-terraform"
             }
         }
         stage ('Compile Stage') {
             steps{
                 script{
-                    withCredentials([[
-                        class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: AWS_CREDENTIALS,
-                        accessKeyVariable: 'AWS_ACCESS_KEY',
-                        secretKeyVariable: 'AWS_SECRET_KEY'
-                    ]])
+
                     currentBuild.displayName = (params.env_name)
 
                 sh '''

@@ -29,16 +29,23 @@ pipeline {
                 script{
                     withCredentials([aws(accessKeyVariable: 'aws_access_key', credentialsId: 'AWS_CREDENTIALS', secretKeyVariable: 'aws_secret_key')])
                     {
-                        currentBuild.displayName = (params.ami_name)
+                        currentBuild.displayName = (params.ami_name)-(params.branch)
 
                         sh """
                             set -ex
-                            cd Packer
-                            sh 'packer_build.sh ${params.ami_name}.pkr.hcl'
+                            export PACKER_LOG=1
+                            export PACKER_LOG_PATH=$WORKSPACE/packer.log
+
+                            source packer_build.sh ${params.ami_name}.pkr.hcl
                         """
                     }
                 }
             }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
         }
     }
 }
