@@ -2,21 +2,41 @@ pipeline {
     agent any
     parameters {
         choice(
-            name: 'AMI',
+            name: 'ami_name',
             choices: ['base-centos8', 'agent-centos8', 'tomcat-centos8'])
+    }
+    options {
+        timestamps()
+        timeout(unit: 'HOURS', time: 2)
+        ansiColor('xterm')
+        buildDiscarder(
+            logRotator(
+                daysToKeepStr: '30',
+                numToKeepStr: '5'
+            )
+        )
     }
     stages {
         stage('Checkout Packer templates') {
             steps{
                 git branch: "main",
-                    credentialsId: '1438fbd6-4b4b-4907-a12c-dda8dcc3e2d7',
+                    credentialsId: 'GITHUB_CREDENTIALS',
                     url: "https://github.com/Lehaa/Ami-builder"
             }
         }
         stage ('Execute Packer') {
             steps{
-                withMaven(maven : 'maven3'){
-                    sh 'mvn clean install'
+                script{
+                    withCredentials([aws(accessKeyVariable: 'aws_access_key', credentialsId: 'AWS_CREDENTIALS', secretKeyVariable: 'aws_secret_key')])
+                    {
+                        currentBuild.displayName = (params.ami_name)
+
+                        sh """
+                            set -ex
+                            cd Packer
+                            sh 'packer_build.sh ${params.ami_name}.pkr.hcl'
+                        """
+                    }
                 }
             }
         }

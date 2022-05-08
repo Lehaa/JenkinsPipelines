@@ -25,6 +25,12 @@ pipeline {
         stage ('Compile Stage') {
             steps{
                 script{
+                    withCredentials([[
+                        class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: AWS_CREDENTIALS,
+                        accessKeyVariable: 'AWS_ACCESS_KEY',
+                        secretKeyVariable: 'AWS_SECRET_KEY'
+                    ]])
                     currentBuild.displayName = (params.env_name)
 
                 sh '''
