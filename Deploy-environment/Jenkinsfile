@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'env_name', defaultValue: 'test-env-<yourname>-<env_number>', description: "Please enter the environment name")
+        string(name: 'env_name', defaultValue: 'test-env-<yourname>-<env_number>', description: "Enter the environment name")
     }
     options {
         timestamps()
@@ -10,7 +10,7 @@ pipeline {
         buildDiscarder(
             logRotator(
                 daysToKeepStr: '30',
-                numToKeepStr: '500'
+                numToKeepStr: '5'
             )
         )
     }
@@ -22,16 +22,31 @@ pipeline {
                     url: "https://github.com/Lehaa/Environment-terraform"
             }
         }
-        stage ('Compile Stage') {
+        stage ('Launch Ec2 Instance') {
+            steps{
+                script{
+                    currentBuild.displayName = (params.env_name)
+                    sh '''
+                        set -ex
+                        source ${WORKSPACE}/variables.sh "$env_name"
+                    '''
+                    env.tomcat_host = readFile('address.txt').trim()
+                }
+            }
+        }
+        stage ('Deploy Application') {
             steps{
                 script{
 
-                    currentBuild.displayName = (params.env_name)
-
-                sh '''
-                    set -ex
-                    source ${WORKSPACE}/variables.sh "$env_name"
-                '''
+                    build job: 'Deploy-application',
+                    parameters: [string(name: 'tomcat_host', value: env.tomcat_host)]
+                }
+            }
+        }
+        stage ('Archive artifacts') {
+            steps{
+                script{
+                    archiveArtifacts(artifacts: 'connection_details.txt', followSymlinks:false)
                 }
             }
         }

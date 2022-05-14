@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'env_name', defaultValue: 'test-env-<yourname>-<env_number>', description: "Please enter the environment name")
+    }
+    options {
+        timestamps()
+        timeout(unit: 'HOURS', time: 2)
+        ansiColor('xterm')
+        buildDiscarder(
+            logRotator(
+                daysToKeepStr: '30',
+                numToKeepStr: '500'
+            )
+        )
+    }
+    stages {
+        stage('Checkout Terraform code') {
+            steps{
+                git branch: "main",
+                    credentialsId: 'GITHUB_CREDENTIALS',
+                    url: "https://github.com/Lehaa/Environment-terraform"
+            }
+        }
+        stage ('Compile Stage') {
+            steps{
+                script{
+
+                    currentBuild.displayName = (params.env_name)
+
+                sh '''
+                    set -ex
+                    source ${WORKSPACE}/destroy.sh "$env_name"
+                '''
+                }
+            }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
+        }
+    }
+}

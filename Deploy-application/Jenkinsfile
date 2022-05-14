@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'tomcat_host', defaultValue: '', description: "Insert the tomcat IP / Hostname")
+    }
+    options {
+        timestamps()
+        timeout(unit: 'HOURS', time: 2)
+        ansiColor('xterm')
+        buildDiscarder(
+            logRotator(
+                daysToKeepStr: '30',
+                numToKeepStr: '5'
+            )
+        )
+    }
+    stages {
+        stage('Checkout Snake project') {
+            steps{
+                git branch: "main",
+                    credentialsId: 'GITHUB_CREDENTIALS',
+                    url: "https://github.com/Lehaa/Snake-game"
+            }
+        }
+        stage ('Compile Stage') {
+            steps{
+                withMaven(maven : 'maven3'){
+                    sh '''
+                    mvn clean install
+                    echo $tomcat_host
+                    '''
+                }
+            }
+        }
+        stage ('Deploy war to tomcat') {
+            steps{
+                deploy adapters: [tomcat9(credentialsId: 'TOMCAT_CREDENTIALS', path: '', url: 'http://' + "$tomcat_host" + ':8080/')], contextPath: 'Snake', war: '**/*.war'
+            }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
+        }
+    }
+}
