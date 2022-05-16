@@ -1,0 +1,37 @@
+pipeline {
+    agent { label 'medium'}
+    options {
+        timestamps()
+        timeout(unit: 'HOURS', time: 2)
+        ansiColor('xterm')
+        buildDiscarder(
+            logRotator(
+                daysToKeepStr: '30',
+                numToKeepStr: '5'
+            )
+        )
+    }
+    stages {
+        stage('Checkout Snake project') {
+            steps{
+                git branch: "main",
+                    credentialsId: 'GITHUB_CREDENTIALS',
+                    url: "https://github.com/Lehaa/Snake-game"
+            }
+        }
+        stage ('Compile Stage') {
+            steps{
+                withMaven(maven : 'maven3'){
+                    sh '''
+                    mvn clean install
+                    '''
+                }
+            }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
+        }
+    }
+}
